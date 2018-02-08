@@ -33,14 +33,17 @@ public class TableJoinKafkaStream {
 
         KStream left = builder.stream(stringSerde, stringSerde, "TextLinesTopic");
         KStream right = builder.stream(stringSerde, stringSerde, "RekeyedIntermediateTopic");
-        KStream joined = left.join(right,
+        KStream joined = left.outerJoin(right,
                 new ValueJoiner() {
                     @Override
                     public Object apply(Object leftValue, Object rightValue) {
-                        return "left=" + leftValue + ", right=" + rightValue;
+                        if (leftValue == null && rightValue != null)
+                            return "left=" + leftValue + ", right=" + rightValue;
+                        else
+                            return null;
                     }
                 }, /* ValueJoiner */
-                JoinWindows.of(1 * 60 * 1000L),
+                JoinWindows.of(30 * 1000L),
                 Serdes.String(), /* key */
                 Serdes.String(),   /* left value */
                 Serdes.String()  /* right value */

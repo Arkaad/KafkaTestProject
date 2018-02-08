@@ -39,7 +39,8 @@ public class Consumer {
             final ConsumerRecords<String, String> consumerRecords =
                     consumer.poll(1000);
             for (ConsumerRecord<String, String> record : consumerRecords) {
-                System.out.println(record.key() + " " + record.value());
+                if (record.value() != null)
+                    System.out.println(record.key() + " " + record.value());
             }
             consumer.commitAsync();
         }

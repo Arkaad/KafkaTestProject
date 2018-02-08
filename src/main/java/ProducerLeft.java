@@ -39,7 +39,7 @@ public class ProducerLeft {
 //                        record.key(), record.value(), metadata.partition(),
 //                        metadata.offset(), elapsedTime);
 //            }
-            for (int i = 1; i <= 6; i++) {
+            for (int i = 1; i <= 10; i++) {
                 ProducerRecord record = new ProducerRecord<>(TOPIC, String.valueOf(i), "value_" + i);
                 RecordMetadata metadata = (RecordMetadata) producer.send(record).get();
                 System.out.printf("sent record(key=%s value=%s) meta(partition=%d, offset=%d) \n", record.key(), record.value(), metadata.partition(), metadata.offset());
