@@ -1,0 +1,58 @@
+import org.apache.kafka.common.serialization.Serde;
+import org.apache.kafka.common.serialization.Serdes;
+import org.apache.kafka.streams.KafkaStreams;
+import org.apache.kafka.streams.StreamsConfig;
+import org.apache.kafka.streams.kstream.JoinWindows;
+import org.apache.kafka.streams.kstream.KStream;
+import org.apache.kafka.streams.kstream.KStreamBuilder;
+import org.apache.kafka.streams.kstream.ValueJoiner;
+
+import java.util.Properties;
+
+/**
+ * Created by Arka Dutta on 08-Feb-18.
+ */
+public class TableJoinKafkaStream {
+
+    public static void main(String[] args) throws Exception {
+
+        Properties config = new Properties();
+
+        config.put(StreamsConfig.APPLICATION_ID_CONFIG,
+                "table-join-kafka-streams");
+        config.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG,
+                "localhost:9092");
+        config.put(StreamsConfig.KEY_SERDE_CLASS_CONFIG,
+                Serdes.String().getClass().getName());
+        config.put(StreamsConfig.VALUE_SERDE_CLASS_CONFIG,
+                Serdes.String().getClass().getName());
+
+        KStreamBuilder builder = new KStreamBuilder();
+
+        final Serde<String> stringSerde = Serdes.String();
+
+        KStream left = builder.stream(stringSerde, stringSerde, "TextLinesTopic");
+        KStream right = builder.stream(stringSerde, stringSerde, "RekeyedIntermediateTopic");
+        KStream joined = left.join(right,
+                new ValueJoiner() {
+                    @Override
+                    public Object apply(Object leftValue, Object rightValue) {
+                        return "left=" + leftValue + ", right=" + rightValue;
+                    }
+                }, /* ValueJoiner */
+                JoinWindows.of(1 * 60 * 1000L),
+                Serdes.String(), /* key */
+                Serdes.String(),   /* left value */
+                Serdes.String()  /* right value */
+        );
+        joined.to(stringSerde, stringSerde, "WordsWithCountsTopic");
+        KafkaStreams streams = new KafkaStreams(builder, config);
+        streams.start();
+
+        joined.print();
+
+        Runtime.getRuntime().addShutdownHook(new Thread(streams::close));
+
+
+    }
+}
