@@ -37,7 +37,7 @@ public class Consumer {
         Runtime.getRuntime().addShutdownHook(new Thread(consumer::close));
         while (true) {
             final ConsumerRecords<String, String> consumerRecords =
-                    consumer.poll(1000);
+                    consumer.poll(200);
             for (ConsumerRecord<String, String> record : consumerRecords) {
                 if (record.value() != null)
                     System.out.println(record.key() + " " + record.value());
