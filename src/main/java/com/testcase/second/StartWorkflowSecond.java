@@ -8,7 +8,7 @@ import java.util.concurrent.ExecutionException;
 public class StartWorkflowSecond {
     public static void main(String[] args) {
         int interval = 5;
-        long intervalTime = 8 * 1000L; //8 secs
+        long intervalTime = 180 * 1000L; //3 minutes
         try {
             new SampleSimulatorSecond(interval, intervalTime).startProcess();
         } catch (ExecutionException | InterruptedException e) {

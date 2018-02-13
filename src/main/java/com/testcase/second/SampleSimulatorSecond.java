@@ -19,20 +19,18 @@ public class SampleSimulatorSecond {
     }
 
     public void startProcess() throws ExecutionException, InterruptedException {
-        long safeTime = 10 * 1000; //10 secs
+        long safeTime = 20 * 1000; //10 secs
         long windowTime = (timeInterval * (intervals - 1)) + safeTime;
         System.out.println("windowTime = " + windowTime + " ms.");
 
         Producer producer;
-        int limit = 10;
+        int limit = 1000000; //1 million
         long startOffset = 0L;
         long endOffset = 0L;
         JoinStreamSecond stream = new JoinStreamSecond(windowTime);
         stream.init();
         for (int i = 0; i < intervals; i++) {
             System.out.println("Sampling Data for : " + i + " interval");
-            startOffset = 0L;
-            endOffset = 0L;
 
             if (i > 0) {
                 producer = new ProducerRight();
@@ -40,18 +38,18 @@ public class SampleSimulatorSecond {
                 producer = new ProducerLeft();
             }
             producer.init();
-            for (int j = 1; j <= limit + (i * 5); j++) {
-                long offset = producer.publishData(String.valueOf(j), producer.getClass().getSimpleName() + "_" + j);
-                if (startOffset == 0) {
-                    startOffset = offset;
-                } else {
-                    endOffset = offset;
-                }
+            System.out.println("Publishing Data ......");
+            long startPublish = System.currentTimeMillis();
+            int j = 1;
+            startOffset = producer.publishData(String.valueOf(j), producer.getClass().getSimpleName() + "_" + j);
+            for (; j <= limit + (i * 5); j++) {
+                endOffset = producer.publishData(String.valueOf(j), producer.getClass().getSimpleName() + "_" + j);
             }
+            System.out.println("End of Publishing data, Time taken : " + (System.currentTimeMillis() - startPublish) + " ms.");
             producer.close();
             Thread.sleep(2 * 1000);
             if (i > 0 && ((i + 1) != intervals)) {
-                System.out.println("startOffset = " + startOffset + " endOffset = " + endOffset + " Interval = " + i);
+                System.out.println("Copying Data with startOffset = " + startOffset + " endOffset = " + endOffset + " Interval = " + i + " .........");
                 copyTopic(startOffset, endOffset);
                 System.out.println("End of Copying Data ....................");
             }

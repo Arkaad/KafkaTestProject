@@ -35,7 +35,7 @@ public class ProducerLeft implements Producer {
         ProducerRecord record = new ProducerRecord<>(TOPIC, key, value);
         RecordMetadata metadata = (RecordMetadata) producer.send(record).get();
         long offset = metadata.offset();
-        System.out.printf("sent record(key=%s value=%s) meta(partition=%d, offset=%d) \n", record.key(), record.value(), metadata.partition(), metadata.offset());
+//        System.out.printf("sent record(key=%s value=%s) meta(partition=%d, offset=%d) \n", record.key(), record.value(), metadata.partition(), metadata.offset());
         return offset;
     }
 

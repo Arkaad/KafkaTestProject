@@ -1,14 +1,17 @@
 package com.testcase.second;
 
-import org.apache.kafka.clients.consumer.*;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -45,22 +48,25 @@ public class CopyRightToLeftTopic {
 
     public static void copyData(long startOffset, long endOffset) throws ExecutionException, InterruptedException {
         boolean breakFlag = false;
+        long count = 0L;
         final KafkaConsumer consumer = createRightConsumer();
         KafkaProducer producer = createLeftProducer();
         consumer.poll(100);
         consumer.seek(new TopicPartition(RIGHT_TOPIC, 0), startOffset);
+        long start = System.currentTimeMillis();
         while (true) {
             ConsumerRecords<String, String> consumerRecords = consumer.poll(100);
             for (ConsumerRecord<String, String> record : consumerRecords) {
                 if (record.value() != null) {
-                    System.out.println("Consumed Record : " + record.key() + ":" + record.value() + " Offset : " + record.offset());
-                    RecordMetadata metadata = (RecordMetadata) producer.send(new ProducerRecord<>(LEFT_TOPIC, record.key(), record.value())).get();
-                    System.out.println("Produced Record : " + record.key() + ":" + record.value() + " Partition : " + metadata.partition() + " Offset : " + metadata.offset());
-
+                    producer.send(new ProducerRecord<>(LEFT_TOPIC, record.key(), record.value()));
+                    count++;
                     if (record.offset() >= endOffset) {
                         breakFlag = true;
                         break;
                     }
+                }
+                if (count % 5000 == 0) {
+                    System.out.println(count + " records copied");
                 }
             }
             if (breakFlag) {
@@ -68,6 +74,7 @@ public class CopyRightToLeftTopic {
                 break;
             }
         }
+        System.out.println("Total : " + count + " records copied in " + (System.currentTimeMillis() - start) + " ms.");
     }
 
     public static void main(String[] args) {
