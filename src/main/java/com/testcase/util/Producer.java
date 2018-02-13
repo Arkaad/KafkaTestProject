@@ -8,7 +8,7 @@ import java.util.concurrent.ExecutionException;
 public interface Producer {
     public void init();
 
-    public void publishData(String key, String value) throws ExecutionException, InterruptedException;
+    public long publishData(String key, String value) throws ExecutionException, InterruptedException;
 
     public void close();
 }
