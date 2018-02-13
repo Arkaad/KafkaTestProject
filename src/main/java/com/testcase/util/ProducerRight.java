@@ -29,12 +29,13 @@ public class ProducerRight implements Producer {
         producer = createProducer();
     }
 
-    public void publishData(String key, String value) throws ExecutionException, InterruptedException {
+    public long publishData(String key, String value) throws ExecutionException, InterruptedException {
 
         ProducerRecord record = new ProducerRecord<>(TOPIC, key, value);
         RecordMetadata metadata = (RecordMetadata) producer.send(record).get();
+        long offset = metadata.offset();
         System.out.printf("sent record(key=%s value=%s) meta(partition=%d, offset=%d) \n", record.key(), record.value(), metadata.partition(), metadata.offset());
-
+        return offset;
     }
 
     public void close() {

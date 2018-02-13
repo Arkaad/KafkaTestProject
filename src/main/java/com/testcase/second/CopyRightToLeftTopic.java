@@ -1,0 +1,80 @@
+package com.testcase.second;
+
+import org.apache.kafka.clients.consumer.*;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.serialization.StringDeserializer;
+import org.apache.kafka.common.serialization.StringSerializer;
+
+import java.util.*;
+import java.util.concurrent.ExecutionException;
+
+/**
+ * Created by Arka Dutta on 13-Feb-18.
+ */
+public class CopyRightToLeftTopic {
+    private final static String RIGHT_TOPIC = "RekeyedIntermediateTopic";
+    private final static String LEFT_TOPIC = "TextLinesTopic";
+    private final static String SERVER = "localhost:9092";
+
+    private static KafkaConsumer createRightConsumer() {
+        final Properties props = new Properties();
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,
+                SERVER);
+        props.put(ConsumerConfig.GROUP_ID_CONFIG,
+                "RightConsumer");
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        // Create the consumer using props.
+        KafkaConsumer consumer = new KafkaConsumer(props);
+        // Subscribe to the topic.
+        consumer.subscribe(Collections.singletonList(RIGHT_TOPIC));
+        return consumer;
+    }
+
+    private static KafkaProducer createLeftProducer() {
+        Properties props = new Properties();
+        props.put("bootstrap.servers", SERVER);
+        props.put("key.serializer", StringSerializer.class.getName());
+        props.put("value.serializer", StringSerializer.class.getName());
+        KafkaProducer producer = new KafkaProducer(props);
+        return producer;
+    }
+
+    public static void copyData(long startOffset, long endOffset) throws ExecutionException, InterruptedException {
+        boolean breakFlag = false;
+        final KafkaConsumer consumer = createRightConsumer();
+        KafkaProducer producer = createLeftProducer();
+        consumer.poll(100);
+        consumer.seek(new TopicPartition(RIGHT_TOPIC, 0), startOffset);
+        while (true) {
+            ConsumerRecords<String, String> consumerRecords = consumer.poll(100);
+            for (ConsumerRecord<String, String> record : consumerRecords) {
+                if (record.value() != null) {
+                    System.out.println("Consumed Record : " + record.key() + ":" + record.value() + " Offset : " + record.offset());
+                    RecordMetadata metadata = (RecordMetadata) producer.send(new ProducerRecord<>(LEFT_TOPIC, record.key(), record.value())).get();
+                    System.out.println("Produced Record : " + record.key() + ":" + record.value() + " Partition : " + metadata.partition() + " Offset : " + metadata.offset());
+
+                    if (record.offset() >= endOffset) {
+                        breakFlag = true;
+                        break;
+                    }
+                }
+            }
+            if (breakFlag) {
+                consumer.close();
+                break;
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        try {
+            copyData(700, 714);
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
