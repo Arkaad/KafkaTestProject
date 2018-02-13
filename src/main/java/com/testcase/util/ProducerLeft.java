@@ -1,8 +1,8 @@
+package com.testcase.util;
+
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
-import org.apache.kafka.common.serialization.LongSerializer;
-import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.serialization.StringSerializer;
 
 import java.util.Properties;
@@ -11,9 +11,11 @@ import java.util.concurrent.ExecutionException;
 /**
  * Created by Arka Dutta on 07-Feb-18.
  */
-public class ProducerLeft {
+public class ProducerLeft implements Producer {
     private final static String TOPIC = "TextLinesTopic";
     private final static String SERVER = "localhost:9092";
+    private KafkaProducer producer = null;
+
 
     public static KafkaProducer createProducer() {
         Properties props = new Properties();
@@ -24,7 +26,26 @@ public class ProducerLeft {
         return producer;
     }
 
-    static void runProducer(final int sendMessageCount) throws Exception {
+    public void init() {
+        producer = createProducer();
+    }
+
+    public void publishData(String key, String value) throws ExecutionException, InterruptedException {
+
+        ProducerRecord record = new ProducerRecord<>(TOPIC, key, value);
+        RecordMetadata metadata = (RecordMetadata) producer.send(record).get();
+        System.out.printf("sent record(key=%s value=%s) meta(partition=%d, offset=%d) \n", record.key(), record.value(), metadata.partition(), metadata.offset());
+
+    }
+
+    public void close() {
+        if (producer != null) {
+            producer.flush();
+            producer.close();
+        }
+    }
+
+    public static void runProducer(final int sendMessageCount) throws Exception {
         final KafkaProducer producer = createProducer();
         long time = System.currentTimeMillis();
         try {

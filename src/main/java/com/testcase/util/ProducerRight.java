@@ -1,17 +1,20 @@
+package com.testcase.util;
+
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
-import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.serialization.StringSerializer;
 
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Arka Dutta on 07-Feb-18.
  */
-public class ProducerRight {
+public class ProducerRight implements Producer {
     private final static String TOPIC = "RekeyedIntermediateTopic";
     private final static String SERVER = "localhost:9092";
+    private KafkaProducer producer = null;
 
     public static KafkaProducer createProducer() {
         Properties props = new Properties();
@@ -20,6 +23,25 @@ public class ProducerRight {
         props.put("value.serializer", StringSerializer.class.getName());
         KafkaProducer producer = new KafkaProducer(props);
         return producer;
+    }
+
+    public void init() {
+        producer = createProducer();
+    }
+
+    public void publishData(String key, String value) throws ExecutionException, InterruptedException {
+
+        ProducerRecord record = new ProducerRecord<>(TOPIC, key, value);
+        RecordMetadata metadata = (RecordMetadata) producer.send(record).get();
+        System.out.printf("sent record(key=%s value=%s) meta(partition=%d, offset=%d) \n", record.key(), record.value(), metadata.partition(), metadata.offset());
+
+    }
+
+    public void close() {
+        if (producer != null) {
+            producer.flush();
+            producer.close();
+        }
     }
 
     static void runProducer(final int sendMessageCount) throws Exception {

@@ -1,3 +1,5 @@
+package com.testcase.util;
+
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -40,7 +42,7 @@ public class Consumer {
                     consumer.poll(200);
             for (ConsumerRecord<String, String> record : consumerRecords) {
                 if (record.value() != null)
-                    System.out.println(record.key() + " " + record.value());
+                    System.out.println("Consumed Record : " + record.key() + ":" + record.value());
             }
             consumer.commitAsync();
         }
