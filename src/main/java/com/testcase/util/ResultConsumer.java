@@ -13,9 +13,9 @@ import java.util.Properties;
  * Created by Arka Dutta on 07-Feb-18.
  */
 public class ResultConsumer {
-    private final static String TOPIC = "WordsWithCountsTopic";
-//    private final static String TOPIC = "TextLinesTopic";
-//    private final static String TOPIC = "RekeyedIntermediateTopic";
+    private final static String TOPIC = "WordsWithCountsTopic"; //Result
+//    private final static String TOPIC = "TextLinesTopic"; //Left
+//    private final static String TOPIC = "RekeyedIntermediateTopic"; //Right
     private final static String SERVER = "localhost:9092";
 
     private static KafkaConsumer createConsumer() {

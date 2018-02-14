@@ -7,10 +7,11 @@ import java.util.concurrent.ExecutionException;
  */
 public class StartWorkflowSecond {
     public static void main(String[] args) {
-        int interval = 5;
-        long intervalTime = 180 * 1000L; //3 minutes
+        int interval = 3;
+        long intervalTime = 1 * 60 * 1000L; //1 minute
+        int limit = 1000;//1 K
         try {
-            new SampleSimulatorSecond(interval, intervalTime).startProcess();
+            new SampleSimulatorSecond(interval, intervalTime, limit).startProcess();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }

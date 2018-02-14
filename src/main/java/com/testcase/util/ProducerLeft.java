@@ -1,6 +1,7 @@
 package com.testcase.util;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -19,9 +20,10 @@ public class ProducerLeft implements Producer {
 
     public static KafkaProducer createProducer() {
         Properties props = new Properties();
-        props.put("bootstrap.servers", SERVER);
-        props.put("key.serializer", StringSerializer.class.getName());
-        props.put("value.serializer", StringSerializer.class.getName());
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, SERVER);
+        props.put(ProducerConfig.BATCH_SIZE_CONFIG, 65536); //64 KB
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         KafkaProducer producer = new KafkaProducer(props);
         return producer;
     }
