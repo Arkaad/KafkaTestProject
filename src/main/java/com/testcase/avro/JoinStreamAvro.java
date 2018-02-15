@@ -34,7 +34,6 @@ public class JoinStreamAvro {
                 Serdes.String().getClass().getName());
         config.put(StreamsConfig.VALUE_SERDE_CLASS_CONFIG,
                 Serdes.ByteArray().getClass().getName());
-//                Serdes.().getClass().getName());
 
         KStreamBuilder builder = new KStreamBuilder();
 
@@ -47,10 +46,8 @@ public class JoinStreamAvro {
                 new ValueJoiner() {
                     @Override
                     public Object apply(Object leftValue, Object rightValue) {
-//                            return "left=" + leftValue + ", right=" + rightValue + "   - " + applicationId;
                         if (leftValue == null && rightValue != null)
                             return rightValue;
-//                        return "Found Match";
                         else
                             return null;
                     }
@@ -58,7 +55,6 @@ public class JoinStreamAvro {
                 JoinWindows.of(windowTime)
         );
         joined.to(stringSerde, byteSerde, "WordsWithCountsTopic");
-//        joined.print();
         streams = new KafkaStreams(builder, config);
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             System.out.println("Closing Kafka Stream");
@@ -67,7 +63,7 @@ public class JoinStreamAvro {
             }
         }));
         try {
-//            streams.cleanUp();
+            streams.cleanUp();
             streams.start();
         } catch (Exception e) {
             e.printStackTrace();
