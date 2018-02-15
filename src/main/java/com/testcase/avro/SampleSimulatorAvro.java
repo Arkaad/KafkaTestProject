@@ -39,23 +39,23 @@ public class SampleSimulatorAvro {
             System.out.println("Publishing Data ......");
             long startPublish = System.currentTimeMillis();
             int j = 1;
-            startOffset = producer.publishData(("ABCDEFGHIJKLMNOP123456QRST458692_25896314784569321478956321478" + String.valueOf(j)),
-                    AvroParser.getByteArray("212121255545" + j));
+            startOffset = producer.publishData(("ABCDEFGHIJKLMNOP123456QRST458692_2589631478456932147895632147_" + String.valueOf(j)),
+                    AvroParser.getByteArray("SampleDataWithIds"));
             for (; j <= limit + (i * 5); j++) {
-                endOffset = producer.publishData(("ABCDEFGHIJKLMNOP123456QRST458692_25896314784569321478956321478" + String.valueOf(j)),
-                        AvroParser.getByteArray("212121255545" + j));
+                endOffset = producer.publishData(("ABCDEFGHIJKLMNOP123456QRST458692_2589631478456932147895632147_" + String.valueOf(j)),
+                        AvroParser.getByteArray("SampleDataWithIds"));
                 if (j % 5000 == 0) {
                     System.out.println(j + " data Published");
                 }
             }
             System.out.println("End of Publishing " + (j - 1) + " data, Time taken : " + (System.currentTimeMillis() - startPublish) + " ms.");
             producer.close();
-//            Thread.sleep(2 * 1000);
-//            if (i > 0 && ((i + 1) != intervals)) {
-//                System.out.println("Copying Data with startOffset = " + startOffset + " endOffset = " + endOffset + " Interval = " + i + " .........");
-//                copyTopic(startOffset, endOffset);
-//                System.out.println("End of Copying Data ....................");
-//            }
+            Thread.sleep(2 * 1000);
+            if (i > 0 && ((i + 1) != intervals)) {
+                System.out.println("Copying Data with startOffset = " + startOffset + " endOffset = " + endOffset + " Interval = " + i + " .........");
+                copyTopic(startOffset, endOffset);
+                System.out.println("End of Copying Data ....................");
+            }
 
 
             if (i + 1 == intervals) {
@@ -68,7 +68,7 @@ public class SampleSimulatorAvro {
         stream.close();
     }
 
-//    private void copyTopic(long startOffset, long endOffset) throws ExecutionException, InterruptedException {
-//        CopyRightToLeftTopic.copyData(startOffset, endOffset);
-//    }
+    private void copyTopic(long startOffset, long endOffset) throws ExecutionException, InterruptedException {
+        AvroCopyRightToLeftTopic.copyData(startOffset, endOffset);
+    }
 }
