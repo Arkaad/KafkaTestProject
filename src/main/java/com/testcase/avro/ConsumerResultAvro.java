@@ -39,11 +39,11 @@ public class ConsumerResultAvro {
         final KafkaConsumer consumer = createConsumer();
         Runtime.getRuntime().addShutdownHook(new Thread(consumer::close));
         while (true) {
-            final ConsumerRecords<String, String> consumerRecords =
+            final ConsumerRecords<String, byte[]> consumerRecords =
                     consumer.poll(200);
-            for (ConsumerRecord<String, String> record : consumerRecords) {
+            for (ConsumerRecord<String, byte[]> record : consumerRecords) {
                 if (record.serializedValueSize() > -1)
-                    System.out.println("Consumed Record : " + record.key() + ":" + record.serializedValueSize());
+                    System.out.println("Consumed Record : " + record.key() + " : " + record.partition() + "_" + record.serializedValueSize());
             }
             consumer.commitAsync();
         }

@@ -7,13 +7,15 @@ import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Arka Dutta on 14-Feb-18.
  */
-public class ProducerLeftAvro implements AvroProducer{
+public class ProducerLeftAvro implements AvroProducer {
     private final static String TOPIC = "TextLinesTopic";
     private final static String SERVER = "localhost:9092";
     private KafkaProducer producer = null;
@@ -32,13 +34,22 @@ public class ProducerLeftAvro implements AvroProducer{
         producer = createProducer();
     }
 
-    public long publishData(String key, byte[] value) throws ExecutionException, InterruptedException {
+    public void publishData(String key, byte[] value, Map<Integer, ArrayList<Long>> map) throws ExecutionException, InterruptedException {
 
         ProducerRecord record = new ProducerRecord<>(TOPIC, key, value);
         RecordMetadata metadata = (RecordMetadata) producer.send(record).get();
+        int partition = metadata.partition();
         long offset = metadata.offset();
-        System.out.printf("sent record(key=%s value=%s) meta(partition=%d, offset=%d) \n", record.key(), record.value(), metadata.partition(), metadata.offset());
-        return offset;
+        ArrayList<Long> list = map.get(partition);
+        if (list == null) {
+            list = new ArrayList<>();
+            list.add(0, offset);
+            list.add(1, offset);
+            map.put(partition, list);
+        } else {
+            list.set(1, offset);
+        }
+//        System.out.printf("sent record(key=%s value=%s) meta(partition=%d, offset=%d) \n", record.key(), record.value(), metadata.partition(), metadata.offset());
     }
 
     public void close() {

@@ -1,5 +1,8 @@
 package com.testcase.avro;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -8,7 +11,7 @@ import java.util.concurrent.ExecutionException;
 public interface AvroProducer {
     public void init();
 
-    public long publishData(String key, byte[] value) throws ExecutionException, InterruptedException;
+    public void publishData(String key, byte[] value, Map<Integer, ArrayList<Long>> map) throws ExecutionException, InterruptedException;
 
     public void close();
 }
