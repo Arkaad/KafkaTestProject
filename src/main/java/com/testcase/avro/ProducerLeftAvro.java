@@ -67,7 +67,7 @@ public class ProducerLeftAvro implements AvroProducer {
 
             for (int i = 1; i <= 10; i++) {
 
-                ProducerRecord record = new ProducerRecord<>(TOPIC, String.valueOf(i), AvroParser.getByteArray(String.valueOf(i)));
+                ProducerRecord record = new ProducerRecord<>(TOPIC, String.valueOf(i), AvroParser.getByteArray(i));
                 RecordMetadata metadata = (RecordMetadata) producer.send(record).get();
                 System.out.printf("sent record(key=%s value=%s) meta(partition=%d, offset=%d) \n", record.key(),
                         record.value(), metadata.partition(), metadata.offset());

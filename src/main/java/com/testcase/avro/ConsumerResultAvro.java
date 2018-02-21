@@ -7,6 +7,7 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.ByteArrayDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Properties;
 
@@ -35,15 +36,17 @@ public class ConsumerResultAvro {
     }
 
 
-    static void runConsumer() throws InterruptedException {
+    static void runConsumer() throws InterruptedException, IOException {
         final KafkaConsumer consumer = createConsumer();
         Runtime.getRuntime().addShutdownHook(new Thread(consumer::close));
         while (true) {
             final ConsumerRecords<String, byte[]> consumerRecords =
                     consumer.poll(200);
             for (ConsumerRecord<String, byte[]> record : consumerRecords) {
-                if (record.serializedValueSize() > -1)
-                    System.out.println("Consumed Record : " + record.key() + " : " + record.partition() + "_" + record.serializedValueSize());
+                if (record.serializedValueSize() > -1) {
+                    System.out.print("Consumed Record : Key -> " + record.key() + " Value-> ");
+                    AvroParser.deserialize(record.value());
+                }
             }
             consumer.commitAsync();
         }

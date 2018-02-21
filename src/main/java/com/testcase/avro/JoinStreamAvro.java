@@ -1,7 +1,5 @@
 package com.testcase.avro;
 
-import org.apache.kafka.common.serialization.Serde;
-import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.JoinWindows;
@@ -28,18 +26,12 @@ public class JoinStreamAvro {
                 "join-Kafka-Second-Stream");
         config.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG,
                 "localhost:9092");
-        config.put(StreamsConfig.KEY_SERDE_CLASS_CONFIG,
-                Serdes.String().getClass().getName());
-        config.put(StreamsConfig.VALUE_SERDE_CLASS_CONFIG,
-                Serdes.ByteArray().getClass().getName());
+        config.put(StreamsConfig.STATE_DIR_CONFIG, "D:\\TestProjects\\KafkaTest\\kafka_2.11-0.11.0.2");
 
         KStreamBuilder builder = new KStreamBuilder();
 
-        final Serde<String> stringSerde = Serdes.String();
-        final Serde<byte[]> byteSerde = Serdes.ByteArray();
-
-        KStream left = builder.stream(stringSerde, byteSerde, "TextLinesTopic");
-        KStream right = builder.stream(stringSerde, byteSerde, "RekeyedIntermediateTopic");
+        KStream left = builder.stream("TextLinesTopic");
+        KStream right = builder.stream("RekeyedIntermediateTopic");
         KStream joined = left.outerJoin(right,
                 new ValueJoiner() {
                     @Override
@@ -52,7 +44,7 @@ public class JoinStreamAvro {
                 }, /* ValueJoiner */
                 JoinWindows.of(windowTime)
         );
-        joined.to(stringSerde, byteSerde, "WordsWithCountsTopic");
+        joined.to("WordsWithCountsTopic");
         streams = new KafkaStreams(builder, config);
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             System.out.println("Closing Kafka Stream");
