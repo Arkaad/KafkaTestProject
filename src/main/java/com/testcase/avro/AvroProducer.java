@@ -9,9 +9,9 @@ import java.util.concurrent.ExecutionException;
  * Created by Arka Dutta on 12-Feb-18.
  */
 public interface AvroProducer {
-    public void init();
+    void init();
 
-    public void publishData(String key, byte[] value, Map<Integer, ArrayList<Long>> map) throws ExecutionException, InterruptedException;
+    void publishData(String key, byte[] value, Map<Integer, ArrayList<Long>> map) throws ExecutionException, InterruptedException;
 
-    public void close();
+    void close();
 }

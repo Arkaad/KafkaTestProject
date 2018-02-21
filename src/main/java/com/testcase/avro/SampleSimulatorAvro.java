@@ -20,7 +20,7 @@ public class SampleSimulatorAvro {
         this.limit = limit;
     }
 
-    public void startProcess() throws ExecutionException, InterruptedException, IOException {
+    public void startProcess() throws ExecutionException, InterruptedException, IOException, IOException {
         long safeTime = 20 * 1000; //20 secs
         long windowTime = (timeInterval * (intervals - 1)) + safeTime;
         System.out.println("windowTime = " + windowTime + " ms.");
@@ -43,24 +43,24 @@ public class SampleSimulatorAvro {
             int j;
             for (j = 1; j <= limit + (i * 5); j++) {
                 producer.publishData(("ABCDEFGHIJKLMNOP123456QRST458692_2589631478456932147895632147_" + String.valueOf(j)),
-                        AvroParser.getByteArray("SampleDataWithIds"), offsetMap);
+                        AvroParser.getByteArray(i), offsetMap);
                 if (j % 5000 == 0) {
                     System.out.println(j + " data Published");
                 }
             }
             System.out.println("End of Publishing " + (j - 1) + " data, Time taken : " + (System.currentTimeMillis() - startPublish) + " ms.");
             producer.close();
-            Thread.sleep(2 * 1000);
-            if (i > 0 && ((i + 1) != intervals)) {
-                System.out.println("Copying Data with Offset Map = " + offsetMap + " Interval = " + i + " .........");
-                long startCopy = System.currentTimeMillis();
-                long count = copyTopic(offsetMap);
-                System.out.println("End of Copying Data .. Time taken to copy " + count + " data is : " + (System.currentTimeMillis() - startCopy) + " ms.");
-            }
-
             if (i + 1 == intervals) {
                 break;
             }
+            Thread.sleep(2 * 1000);
+            if (i > 0) {
+                System.out.println("Copying Data with Offset Map = " + offsetMap + " Interval = " + i + " .........");
+                long startCopy = System.currentTimeMillis();
+                long copyCount = copyTopic(offsetMap);
+                System.out.println("End of Copying Data .. Time taken to copy " + copyCount + " data is : " + (System.currentTimeMillis() - startCopy) + " ms.");
+            }
+
             System.out.println("Scheduled for next Interval.. " + (i + 1) + " !!");
             Thread.sleep(timeInterval);
         }
