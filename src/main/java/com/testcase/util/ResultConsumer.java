@@ -14,7 +14,7 @@ import java.util.Properties;
  */
 public class ResultConsumer {
     private final static String TOPIC = "WordsWithCountsTopic"; //Result
-//    private final static String TOPIC = "TextLinesTopic"; //Left
+    //    private final static String TOPIC = "TextLinesTopic"; //Left
 //    private final static String TOPIC = "RekeyedIntermediateTopic"; //Right
     private final static String SERVER = "localhost:9092";
 
@@ -42,7 +42,7 @@ public class ResultConsumer {
                     consumer.poll(200);
             for (ConsumerRecord<String, String> record : consumerRecords) {
                 if (record.value() != null)
-                    System.out.println("Consumed Record : " + record.key() + ":" + record.value());
+                    System.out.println("Consumed Record : " + record.key() + " : " + record.value());
             }
             consumer.commitAsync();
         }
