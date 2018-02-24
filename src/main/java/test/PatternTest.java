@@ -23,7 +23,7 @@ public class PatternTest {
             for (int col = 0; col <= maxColumn; col++) {
                 if (arr[row][col].equals("#")) {
                     boundaryCount = getBoundaryCount(arr, row, col);
-//                    System.out.println("boundaryCount = " + boundaryCount);
+                    System.out.println("row : " + row + " col : " + col + " boundaryCount = " + boundaryCount);
                     count += boundaryCount;
                 }
             }
@@ -36,77 +36,58 @@ public class PatternTest {
         if (maxRow == maxColumn && maxRow == 0) {
             return 4;
         }
-        //for 0th row
-        if (row == 0) {
+        //for 0th and maxRow
+        if (row == 0 || row == maxRow) {
             if (col == 0) {
                 boundaryCount += 2;
-                if (isOk(arr, row, col + 1)) {
+                if (isOkAndNotEnclosed(arr, row, col + 1)) {
                     boundaryCount += 1;
                 }
             } else {
                 boundaryCount += 1;
                 if (col == maxColumn) {
                     boundaryCount += 1;
-                    if (isOk(arr, row, col - 1)) {
-                        boundaryCount += 1;
-                    }
+                }
+                if (isOkAndNotEnclosed(arr, row, col - 1)) {
+                    boundaryCount += 1;
                 }
             }
-            if (isOk(arr, row + 1, col)) {
+            if (row == 0 && isOkAndNotEnclosed(arr, row + 1, col)) {
+                boundaryCount += 1;
+            } else if (row == maxRow && isOkAndNotEnclosed(arr, row - 1, col)) {
                 boundaryCount += 1;
             }
         }
 
-        //for maxRow
-        else if (row == maxRow && col == 0) {
-            boundaryCount += 2;
-            if (isOk(arr, row, col + 1)) {
-                boundaryCount += 1;
-            }
-            if (isOk(arr, row - 1, col)) {
-                boundaryCount += 1;
-            }
-        } else if (row == maxRow && col > 0) {
-            boundaryCount += 1;
-            if (col == maxColumn) {
-                boundaryCount += 1;
-                if (isOk(arr, row, col - 1)) {
-                    boundaryCount += 1;
-                }
-            }
-            if (isOk(arr, row - 1, col)) {
-                boundaryCount += 1;
-            }
-        }
         //rest
         else if (col == 0 || col == maxColumn) {
             boundaryCount += 1;
-            if (isOk(arr, row - 1, col)) {
+            if (isOkAndNotEnclosed(arr, row - 1, col)) {
                 boundaryCount++;
             }
             if (col == 0) {
-                if (isOk(arr, row, col + 1)) {
+                if (isOkAndNotEnclosed(arr, row, col + 1)) {
                     boundaryCount++;
                 }
             } else {
-                if (isOk(arr, row, col - 1)) {
+                if (isOkAndNotEnclosed(arr, row, col - 1)) {
                     boundaryCount++;
                 }
             }
-            if (isOk(arr, row + 1, col)) {
+            if (isOkAndNotEnclosed(arr, row + 1, col)) {
                 boundaryCount++;
             }
         } else {
-            if (isOk(arr, row, col - 1)) {
+            if (isOkAndNotEnclosed(arr, row, col - 1)) {
                 boundaryCount++;
             }
-            if (isOk(arr, row - 1, col)) {
+            if (isOkAndNotEnclosed(arr, row - 1, col)) {
                 boundaryCount++;
             }
-            if (isOk(arr, row, col + 1)) {
+            if (isOkAndNotEnclosed(arr, row, col + 1)) {
                 boundaryCount++;
             }
-            if (isOk(arr, row + 1, col)) {
+            if (isOkAndNotEnclosed(arr, row + 1, col)) {
                 boundaryCount++;
             }
         }
@@ -136,6 +117,64 @@ public class PatternTest {
 //            isOk = isNotEnclosed(arr, row, col);
         }
         return isOk;
+    }
+
+    private static boolean isOkAndNotEnclosed(String arr[][], int row, int col) {
+        if (arr[row][col].equals("#")) {
+            return false;
+        } else if (row <= 0 || row >= maxRow || col <= 0 || col >= maxColumn) {
+            return true;
+        } else {
+            if (reduceLeft(arr, row, col - 1)) {
+                return true;
+            } else if (reduceTop(arr, row - 1, col)) {
+                return true;
+            } else if (reduceRight(arr, row, col + 1)) {
+                return true;
+            } else if (reduceDown(arr, row + 1, col)) {
+                return true;
+            }
+            //reduceTop
+            //reduceRight
+            //reduceDown
+        }
+        return false;
+    }
+
+    private static boolean reduceLeft(String arr[][], int row, int col) {
+        for (int i = col; i >= 0; i--) {
+            if (arr[row][i].equals("#")) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean reduceTop(String arr[][], int row, int col) {
+        for (int i = row; i >= 0; i--) {
+            if (arr[i][col].equals("#")) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean reduceRight(String arr[][], int row, int col) {
+        for (int i = col; i <= maxColumn; i++) {
+            if (arr[row][i].equals("#")) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean reduceDown(String arr[][], int row, int col) {
+        for (int i = row; i <= maxRow; i++) {
+            if (arr[i][col].equals("#")) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private static boolean isNotEnclosed(String arr[][], int row, int col) {
