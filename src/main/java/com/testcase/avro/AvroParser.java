@@ -11,9 +11,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
-import java.io.EOFException;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Created by Arka Dutta on 14-Feb-18.
@@ -43,8 +44,8 @@ public class AvroParser {
         return fieldObject;
     }
 
-    public static void main(String[] args) {
-        try {
+//    public static void main(String[] args) {
+//        try {
 //            GenericRecord record = new GenericData.Record(schema);
 //            record.put("colId", "789456123741852963325698741256325897");
 //            record.put("startTime", System.currentTimeMillis());
@@ -58,13 +59,13 @@ public class AvroParser {
 //
 //            dataFileWriter.flush();
 //            System.out.println(new String(outputStream.toByteArray()));
-            byte[] arr = getBinaryAvroData(System.currentTimeMillis(), 6656321656864654554L, 545656546513546686L, 1);
-            System.out.println(new String(arr));
-            deserialize(arr);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//            byte[] arr = getBinaryAvroData(System.currentTimeMillis(), 6656321656864654554L, 545656546513546686L, 1);
+//            System.out.println(new String(arr));
+//            deserialize(arr);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     @Deprecated
     public static byte[] getByteArray(int interval) throws IOException {
@@ -96,28 +97,30 @@ public class AvroParser {
     }
 
 
-    public static byte[] getBinaryAvroData(long creationTime, long prjId, long jobId, int interval) throws Exception {
-        ByteArrayOutputStream stream = null;
+    public static byte[] getBinaryAvroData(String colId, long creationTime, String jobId, int interval, String prjId, String sampleHash) throws Exception {
+        ByteArrayOutputStream outputStream = null;
         try {
+            if (schema == null) {
+                createAvroSchema();
+            }
             GenericRecord genericRecord = new GenericData.Record(schema);
+            genericRecord.put("columnId", colId);
             genericRecord.put("creationTime", creationTime);
             genericRecord.put("jobId", jobId);
             genericRecord.put("interval", interval);
             genericRecord.put("lngPrjId", prjId);
+            genericRecord.put("sample", sampleHash);
 
-            stream = new ByteArrayOutputStream();
-            BinaryEncoder encoder = EncoderFactory.get().directBinaryEncoder(stream, null);
+            outputStream = new ByteArrayOutputStream();
+            BinaryEncoder encoder = EncoderFactory.get().directBinaryEncoder(outputStream, null);
 
             DatumWriter<GenericRecord> datumWriter = new GenericDatumWriter<>(schema);
             datumWriter.write(genericRecord, encoder);
             encoder.flush();
-            return stream.toByteArray();
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
+            return outputStream.toByteArray();
         } finally {
-            if (stream != null) {
-                stream.close();
+            if (outputStream != null) {
+                outputStream.close();
             }
         }
     }
@@ -129,18 +132,59 @@ public class AvroParser {
             createAvroSchema();
         }
         DatumReader<GenericRecord> datumReader = new GenericDatumReader<>(schema);
-        while (true) {
-            try {
-                GenericRecord genericRecord = datumReader.read(null, decoder);
-                System.out.println(genericRecord.get("columnId") + "\t"
-                        + genericRecord.get("creationTime") + "\t"
-                        + genericRecord.get("jobId") + "\t"
-                        + genericRecord.get("interval") + "\t"
-                        + genericRecord.get("lngPrjId") + "\t"
-                        + genericRecord.get("sample"));
-            } catch (EOFException e) {
-                break;
-            }
+        GenericRecord genericRecord = datumReader.read(null, decoder);
+        System.out.println(genericRecord.get("columnId") + "\t"
+                + genericRecord.get("creationTime") + "\t"
+                + genericRecord.get("jobId") + "\t"
+                + genericRecord.get("interval") + "\t"
+                + genericRecord.get("lngPrjId") + "\t"
+                + genericRecord.get("sample"));
+    }
+
+    public static Map<String, Object> getDeserializedAvroDataMap(byte[] avroFileContentWithoutSchema) throws JSONException, IOException {
+        BinaryDecoder decoder = DecoderFactory.get().binaryDecoder(avroFileContentWithoutSchema, null);
+        if (schema == null) {
+            createAvroSchema();
         }
+        Map<String, Object> dataMap = new HashMap<>();
+        DatumReader<GenericRecord> datumReader = new GenericDatumReader<>(schema);
+        GenericRecord genericRecord = datumReader.read(null, decoder);
+
+        dataMap.put("columnId", genericRecord.get("columnId"));
+        dataMap.put("creationTime", genericRecord.get("creationTime"));
+        dataMap.put("jobId", genericRecord.get("jobId"));
+        dataMap.put("interval", genericRecord.get("interval"));
+        dataMap.put("lngPrjId", genericRecord.get("lngPrjId"));
+        dataMap.put("sample", genericRecord.get("sample"));
+        return dataMap;
+    }
+
+
+    public static void writeAvro() throws Exception {
+//        if (schema == null) {
+//            createAvroSchema();
+//        }
+//        GenericRecord genericRecord = new GenericData.Record(schema);
+//        genericRecord.put("columnId", "fdd65c91-25cd-314a-996c-d6e5dcaaff31");
+//        genericRecord.put("creationTime", System.currentTimeMillis());
+//        genericRecord.put("jobId", "drr65c91-58cd-9578-996c-d6e5dcaaff31");
+//        genericRecord.put("interval", 0);
+//        genericRecord.put("lngPrjId", "hgyd65c91-25cd-354a-699c-d6e5dcaaff45");
+//        genericRecord.put("sample", "3dd3c9449454af476e14fe9d7bdb1ba0");
+//
+//        File avroOutput = new File("D:\\TestFiles\\LineageTest.avro");
+//        DataFileWriter<GenericRecord> dataFileWriter = new DataFileWriter<>(new GenericDatumWriter<>(schema));
+//        dataFileWriter.setCodec(CodecFactory.nullCodec());
+//        dataFileWriter.create(schema, avroOutput);
+//        dataFileWriter.append(genericRecord);
+//        dataFileWriter.flush();
+//        dataFileWriter.close();
+//        System.out.println("Success");
+//        byte[] arr = getBinaryAvroData("fdd65c91-25cd-314a-996c-d6e5dcaaff31", System.currentTimeMillis(), "drr65c91-58cd-9578-996c-d6e5dcaaff31", 0, "hgyd65c91-25cd-354a-699c-d6e5dcaaff45", "3dd3c9449454af476e14fe9d7bdb1ba0");
+//        byte[] arr = getBinaryAvroData(System.currentTimeMillis(), 6355465L, 5454654L, 0);
+//        try (FileOutputStream fos = new FileOutputStream("D:\\TestFiles\\LineageTest.avro")) {
+//            fos.write(arr);
+//            fos.close();
+//        }
     }
 }

@@ -1,5 +1,5 @@
-package com.testcase.avro;
-
+import org.apache.kafka.common.serialization.Serde;
+import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.JoinWindows;
@@ -10,65 +10,57 @@ import org.apache.kafka.streams.kstream.ValueJoiner;
 import java.util.Properties;
 
 /**
- * Created by Arka Dutta on 13-Feb-18.
+ * Created by Arka Dutta on 12-Feb-18.
  */
-public class JoinStreamAvro {
+public class JoinKafkaStream {
     private KafkaStreams streams = null;
-    private long windowTime = 0L;
 
-    public JoinStreamAvro(long windowTime) {
-        this.windowTime = windowTime;
-    }
-
-    public void init() {
+    public void init(long windowTime) {
         Properties config = new Properties();
+
         config.put(StreamsConfig.APPLICATION_ID_CONFIG,
-                "join-Kafka-Second-Stream");
+                "table-join-kafka-streams");
         config.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG,
                 "localhost:9092");
-        config.put(StreamsConfig.STATE_DIR_CONFIG, "D:\\TestProjects\\KafkaTest\\kafka_2.11-0.11.0.2\\streams-pipe");
+        config.put(StreamsConfig.KEY_SERDE_CLASS_CONFIG,
+                Serdes.String().getClass().getName());
+        config.put(StreamsConfig.VALUE_SERDE_CLASS_CONFIG,
+                Serdes.String().getClass().getName());
 
         KStreamBuilder builder = new KStreamBuilder();
 
-        KStream left = builder.stream("TextLinesTopic");
-        KStream right = builder.stream("RekeyedIntermediateTopic");
+        final Serde<String> stringSerde = Serdes.String();
+
+        KStream left = builder.stream(stringSerde, stringSerde, "TextLinesTopic");
+        KStream right = builder.stream(stringSerde, stringSerde, "RekeyedIntermediateTopic");
         KStream joined = left.outerJoin(right,
                 new ValueJoiner() {
                     @Override
                     public Object apply(Object leftValue, Object rightValue) {
                         if (leftValue == null && rightValue != null)
-                            return rightValue;
+                            return "left=" + null + ", right=" + rightValue;
                         else
                             return null;
                     }
                 }, /* ValueJoiner */
                 JoinWindows.of(windowTime)
         );
-        joined.to("WordsWithCountsTopic");
+        joined.to(stringSerde, stringSerde, "WordsWithCountsTopic");
         streams = new KafkaStreams(builder, config);
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             System.out.println("Closing Kafka Stream");
             if (streams != null) {
-                close();
+                streams.close();
             }
         }));
-        try {
-            streams.cleanUp();
-            streams.start();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        streams.cleanUp();
+        streams.start();
     }
 
     public void close() {
-        System.out.println("Closing Stream ...");
+        System.out.println("Closing Kafka Stream");
         if (streams != null) {
             streams.close();
         }
-    }
-
-    public static void main(String[] args) {
-        JoinStreamAvro obj = new JoinStreamAvro(5 * 60 * 1000);
-        obj.init();
     }
 }
