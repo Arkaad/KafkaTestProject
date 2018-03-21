@@ -17,6 +17,7 @@ import java.util.Properties;
 public class LeftConsumerAvro {
     private final static String TOPIC = "TextLinesTopic";
     private final static String SERVER = "localhost:9092";
+    private final static long POLL_TIMEOUT = 5 * 1000;  //5 secs
 
     private static KafkaConsumer createConsumer() {
         final Properties props = new Properties();
@@ -36,17 +37,25 @@ public class LeftConsumerAvro {
 
     static void runConsumer() throws InterruptedException, IOException {
         final KafkaConsumer consumer = createConsumer();
+        long count = 0L;
+        long loopCount = 0L;
         Runtime.getRuntime().addShutdownHook(new Thread(consumer::close));
         while (true) {
-            final ConsumerRecords<String, byte[]> consumerRecords =
-                    consumer.poll(500);
+            final ConsumerRecords<String, byte[]> consumerRecords = consumer.poll(POLL_TIMEOUT);
             for (ConsumerRecord<String, byte[]> record : consumerRecords) {
                 if (record.value() != null) {
-                    System.out.print("Consumed Record : Key -> " + record.key() + " Value-> ");
-                    AvroParser.deserialize(record.value());
+                    count++;
+                    loopCount++;
+                    if (count % 5000 == 0) {
+                        System.out.println("Consumed Record : Key -> " + record.key() + " ValueMap -> " +
+                                AvroParser.getDeserializedAvroDataMap(record.value()));
+                        System.out.println("count = " + count);
+                    }
                 }
             }
+            System.out.println("loopCount = " + loopCount);
             consumer.commitAsync();
+            loopCount = 0L;
         }
     }
 

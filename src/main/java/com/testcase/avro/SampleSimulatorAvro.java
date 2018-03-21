@@ -20,12 +20,13 @@ public class SampleSimulatorAvro {
         this.limit = limit;
     }
 
-    public void startProcess() throws ExecutionException, InterruptedException, IOException, IOException {
+    public void startProcess() throws Exception {
         long safeTime = 20 * 1000; //20 secs
         long windowTime = (timeInterval * (intervals - 1)) + safeTime;
         System.out.println("windowTime = " + windowTime + " ms.");
 
         AvroProducer producer;
+        AvroParser.createAvroSchema();
         JoinStreamAvro stream = new JoinStreamAvro(windowTime);
         stream.init();
         for (int i = 0; i < intervals; i++) {
@@ -42,8 +43,8 @@ public class SampleSimulatorAvro {
             Map<Integer, ArrayList<Long>> offsetMap = new HashMap<>();
             int j;
             for (j = 1; j <= limit + (i * 5); j++) {
-                producer.publishData(("ABCDEFGHIJKLMNOP123456QRST458692_2589631478456932147895632147_" + String.valueOf(j)),
-                        AvroParser.getByteArray(i), offsetMap);
+                producer.publishData(("COL_ID_" + String.valueOf(j)),
+                        AvroParser.getBinaryAvroData("COL_ID",System.currentTimeMillis(),"JOB_ID",i,"PRJ_ID","SAMPLE_HASH"), offsetMap);
                 if (j % 5000 == 0) {
                     System.out.println(j + " data Published");
                 }

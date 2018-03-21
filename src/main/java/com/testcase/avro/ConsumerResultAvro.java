@@ -38,7 +38,12 @@ public class ConsumerResultAvro {
 
     static void runConsumer() throws InterruptedException, IOException {
         final KafkaConsumer consumer = createConsumer();
-        Runtime.getRuntime().addShutdownHook(new Thread(consumer::close));
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+            @Override
+            public void run() {
+                consumer.close();
+            }
+        }));
         while (true) {
             final ConsumerRecords<String, byte[]> consumerRecords =
                     consumer.poll(200);

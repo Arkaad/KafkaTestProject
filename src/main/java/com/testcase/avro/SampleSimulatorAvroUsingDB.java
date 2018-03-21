@@ -57,7 +57,7 @@ public class SampleSimulatorAvroUsingDB {
                     count++;
                     StringBuilder key = new StringBuilder(String.valueOf(colId));
                     key.append("_").append(hash).append("-").append(rs.getString(1));
-                    producer.publishData(key.toString(), AvroParser.getBinaryAvroData(startPublish, prjId, jobId, i), offsetMap);
+//                    producer.publishData(key.toString(), AvroParser.getBinaryAvroData(startPublish, prjId, jobId, i), offsetMap);
                     if (count % 5000 == 0) {
                         System.out.println(count + " data Published");
                     }
