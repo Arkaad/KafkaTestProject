@@ -15,7 +15,7 @@ import java.util.Properties;
  * Created by Arka Dutta on 07-Feb-18.
  */
 public class LeftConsumerAvro {
-    private final static String TOPIC = "TextLinesTopic";
+    private final static String TOPIC = "kafka-test-left";
     private final static String SERVER = "localhost:9092";
     private final static long POLL_TIMEOUT = 5 * 1000;  //5 secs
 

@@ -30,8 +30,8 @@ public class JoinStreamAvro {
 
         KStreamBuilder builder = new KStreamBuilder();
 
-        KStream left = builder.stream("TextLinesTopic");
-        KStream right = builder.stream("RekeyedIntermediateTopic");
+        KStream left = builder.stream("kafka-test-left");
+        KStream right = builder.stream("kafka-test-right");
         KStream joined = left.outerJoin(right,
                 new ValueJoiner() {
                     @Override
@@ -44,7 +44,7 @@ public class JoinStreamAvro {
                 }, /* ValueJoiner */
                 JoinWindows.of(windowTime)
         );
-        joined.to("WordsWithCountsTopic");
+        joined.to("kafka-test-result");
         streams = new KafkaStreams(builder, config);
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             System.out.println("Closing Kafka Stream");
