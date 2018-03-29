@@ -15,7 +15,7 @@ import java.util.Properties;
  * Created by Arka Dutta on 07-Feb-18.
  */
 public class RightConsumerAvro {
-    private final static String TOPIC = "RekeyedIntermediateTopic";
+    private final static String TOPIC = "kafka-test-right";
     private final static String SERVER = "localhost:9092";
     private final static long POLL_INTERVAL = 5 * 1000;  //5 secs
 

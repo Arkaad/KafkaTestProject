@@ -1,21 +1,22 @@
-package com.testcase.util;
+package com;
 
+import com.testcase.avro.AvroParser;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.serialization.ByteArrayDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Properties;
 
 /**
  * Created by Arka Dutta on 07-Feb-18.
  */
-public class ResultConsumer {
-    private final static String TOPIC = "kafka-test-result"; //Result
-    //    private final static String TOPIC = "kafka-test-left"; //Left
-//    private final static String TOPIC = "kafka-test-right"; //Right
+public class KafkaSimpleConsumer {
+    private final static String TOPIC = "test";
     private final static String SERVER = "localhost:9092";
 
     private static KafkaConsumer createConsumer() {
@@ -34,15 +35,16 @@ public class ResultConsumer {
     }
 
 
-    static void runConsumer() throws InterruptedException {
+    static void runConsumer() throws InterruptedException, IOException {
         final KafkaConsumer consumer = createConsumer();
         Runtime.getRuntime().addShutdownHook(new Thread(consumer::close));
         while (true) {
-            final ConsumerRecords<String, String> consumerRecords =
+            final ConsumerRecords<String, byte[]> consumerRecords =
                     consumer.poll(200);
-            for (ConsumerRecord<String, String> record : consumerRecords) {
-                if (record.value() != null)
-                    System.out.println("Consumed Record : " + record.key() + " : " + record.value());
+            for (ConsumerRecord<String, byte[]> record : consumerRecords) {
+                if (record.value() != null) {
+                    System.out.print("\nConsumed Record : Key -> " + record.key() + " Value-> "+record.value());
+                }
             }
             consumer.commitAsync();
         }

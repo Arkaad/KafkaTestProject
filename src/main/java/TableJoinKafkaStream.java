@@ -31,8 +31,8 @@ public class TableJoinKafkaStream {
         KStreamBuilder builder = new KStreamBuilder();
 
         final Serde<String> stringSerde = Serdes.String();
-        KStream left = builder.stream(TopologyBuilder.AutoOffsetReset.LATEST, stringSerde, stringSerde, "TextLinesTopic");
-        KStream right = builder.stream(TopologyBuilder.AutoOffsetReset.LATEST, stringSerde, stringSerde, "RekeyedIntermediateTopic");
+        KStream left = builder.stream(TopologyBuilder.AutoOffsetReset.LATEST, stringSerde, stringSerde, "kafka-test-left");
+        KStream right = builder.stream(TopologyBuilder.AutoOffsetReset.LATEST, stringSerde, stringSerde, "kafka-test-right");
         KStream joined = left.outerJoin(right,
                 new ValueJoiner() {
                     @Override
@@ -46,7 +46,7 @@ public class TableJoinKafkaStream {
                 }, /* ValueJoiner */
                 JoinWindows.of(30 * 1000L)
         );
-        joined.to(stringSerde, stringSerde, "WordsWithCountsTopic");
+        joined.to(stringSerde, stringSerde, "kafka-test-result");
         KafkaStreams streams = new KafkaStreams(builder, config);
         streams.cleanUp();
         streams.start();

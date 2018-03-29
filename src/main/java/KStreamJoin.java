@@ -32,16 +32,16 @@ public class KStreamJoin {
 
         KStreamBuilder builder = new KStreamBuilder();
 
-        KStream<String, String> textLines = builder.stream(stringSerde, stringSerde, "TextLinesTopic");
+        KStream<String, String> textLines = builder.stream(stringSerde, stringSerde, "kafka-test-left");
         Pattern pattern = Pattern.compile("\\W+", Pattern.UNICODE_CHARACTER_CLASS);
 
 //        KStream<String, Long> wordCounts = textLines
 //                .flatMapValues(value -> Arrays.asList(pattern.split(value.toLowerCase())))
 //                .map(((key, value) -> new KeyValue<String, String>(value, value)))
-//                .through("RekeyedIntermediateTopic")
+//                .through("kafka-test-right")
 //                .countByKey("Counts").toStream();
 //
-//        wordCounts.to(stringSerde, longSerde, "WordsWithCountsTopic");
+//        wordCounts.to(stringSerde, longSerde, "kafka-test-result");
         KafkaStreams streams = new KafkaStreams(builder, streamsConfiguration);
         System.out.println("starting kafka streams...");
         streams.start();

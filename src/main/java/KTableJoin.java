@@ -25,11 +25,11 @@ public class KTableJoin {
 
         KStreamBuilder builder = new KStreamBuilder();
 
-        KTable left = builder.table("TextLinesTopic", "Table1");
-        KTable right = builder.table("RekeyedIntermediateTopic", "Table2");
+        KTable left = builder.table("kafka-test-left", "Table1");
+        KTable right = builder.table("kafka-test-right", "Table2");
         KTable joined = left.join(right,
                 (leftValue, rightValue) -> "left=" + leftValue + ", right=" + rightValue);
-        joined.toStream().to("WordsWithCountsTopic");
+        joined.toStream().to("kafka-test-result");
 
         KafkaStreams streams = new KafkaStreams(builder, config);
         streams.start();

@@ -16,7 +16,7 @@ import java.util.concurrent.ExecutionException;
  * Created by Arka Dutta on 14-Feb-18.
  */
 public class ProducerRightAvro implements AvroProducer {
-    private final static String TOPIC = "RekeyedIntermediateTopic";
+    private final static String TOPIC = "kafka-test-right";
     private final static String SERVER = "localhost:9092";
     private KafkaProducer producer = null;
 

@@ -18,8 +18,8 @@ import java.util.concurrent.ExecutionException;
  * Created by Arka Dutta on 13-Feb-18.
  */
 public class CopyRightToLeftTopic {
-    private final static String RIGHT_TOPIC = "RekeyedIntermediateTopic";
-    private final static String LEFT_TOPIC = "TextLinesTopic";
+    private final static String RIGHT_TOPIC = "kafka-test-right";
+    private final static String LEFT_TOPIC = "kafka-test-left";
     private final static String SERVER = "localhost:9092";
 
     private static KafkaConsumer createRightConsumer() {

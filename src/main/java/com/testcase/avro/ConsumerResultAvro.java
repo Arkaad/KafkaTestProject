@@ -16,8 +16,8 @@ import java.util.Properties;
  */
 public class ConsumerResultAvro {
     private final static String TOPIC = "kafka-test-result";  //Result
-    //    private final static String TOPIC = "TextLinesTopic";  //Left
-//    private final static String TOPIC = "RekeyedIntermediateTopic";  //Right
+    //    private final static String TOPIC = "kafka-test-left";  //Left
+//    private final static String TOPIC = "kafka-test-right";  //Right
     private final static String SERVER = "localhost:9092";
 
     private static KafkaConsumer createConsumer() {

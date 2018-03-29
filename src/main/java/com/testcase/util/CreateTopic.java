@@ -20,7 +20,7 @@ public class CreateTopic {
         props.setProperty(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         AdminClient adminClient = AdminClient.create(props);
 
-        DescribeTopicsResult describeTopicsResult = adminClient.describeTopics(Arrays.asList("TextLinesTopic", "RekeyedIntermediateTopic", "WordsWithCountsTopic"));
+        DescribeTopicsResult describeTopicsResult = adminClient.describeTopics(Arrays.asList("kafka-test-left", "kafka-test-right", "kafka-test-result"));
         KafkaFuture<Map<String, TopicDescription>> all = describeTopicsResult.all();
         Map<String, TopicDescription> stringTopicDescriptionMap = all.get();
         for (Map.Entry<String, TopicDescription> descriptionEntry : stringTopicDescriptionMap.entrySet()) {

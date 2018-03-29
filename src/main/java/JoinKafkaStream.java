@@ -31,8 +31,8 @@ public class JoinKafkaStream {
 
         final Serde<String> stringSerde = Serdes.String();
 
-        KStream left = builder.stream(stringSerde, stringSerde, "TextLinesTopic");
-        KStream right = builder.stream(stringSerde, stringSerde, "RekeyedIntermediateTopic");
+        KStream left = builder.stream(stringSerde, stringSerde, "kafka-test-left");
+        KStream right = builder.stream(stringSerde, stringSerde, "kafka-test-right");
         KStream joined = left.outerJoin(right,
                 new ValueJoiner() {
                     @Override
@@ -45,7 +45,7 @@ public class JoinKafkaStream {
                 }, /* ValueJoiner */
                 JoinWindows.of(windowTime)
         );
-        joined.to(stringSerde, stringSerde, "WordsWithCountsTopic");
+        joined.to(stringSerde, stringSerde, "kafka-test-result");
         streams = new KafkaStreams(builder, config);
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             System.out.println("Closing Kafka Stream");
