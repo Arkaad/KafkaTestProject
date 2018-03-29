@@ -19,14 +19,14 @@ import java.util.concurrent.ExecutionException;
  * Created by Arka Dutta on 13-Feb-18.
  */
 public class AvroCopyRightToLeftTopic {
-    private final static String RIGHT_TOPIC = "RekeyedIntermediateTopic";
-    private final static String LEFT_TOPIC = "TextLinesTopic";
+    private final static String RIGHT_TOPIC = "kafka-test-right";
+    private final static String LEFT_TOPIC = "kafka-test-left";
     private final static String KAFKA_SERVER = "localhost:9092";
 
     private KafkaConsumer createRightConsumer() {
         final Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, KAFKA_SERVER);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, "AvroRightConsumer");
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, "kafka-test-consumer");
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer.class.getName());
