@@ -15,7 +15,7 @@ import java.util.Properties;
  * Created by Arka Dutta on 14-Feb-18.
  */
 public class ConsumerResultAvro {
-    private final static String TOPIC = "WordsWithCountsTopic";  //Result
+    private final static String TOPIC = "kafka-test-result";  //Result
     //    private final static String TOPIC = "TextLinesTopic";  //Left
 //    private final static String TOPIC = "RekeyedIntermediateTopic";  //Right
     private final static String SERVER = "localhost:9092";

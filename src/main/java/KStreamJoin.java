@@ -25,6 +25,7 @@ public class KStreamJoin {
         streamsConfiguration.put(StreamsConfig.ZOOKEEPER_CONNECT_CONFIG, "localhost:2181");
         streamsConfiguration.put(StreamsConfig.KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
         streamsConfiguration.put(StreamsConfig.VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
+        streamsConfiguration.put(StreamsConfig.APPLICATION_ID_CONFIG, "test-kafka-project-app");
 
         final Serde<String> stringSerde = Serdes.String();
         final Serde<Long> longSerde = Serdes.Long();
@@ -42,6 +43,7 @@ public class KStreamJoin {
 //
 //        wordCounts.to(stringSerde, longSerde, "WordsWithCountsTopic");
         KafkaStreams streams = new KafkaStreams(builder, streamsConfiguration);
+        System.out.println("starting kafka streams...");
         streams.start();
 
         Runtime.getRuntime().addShutdownHook(new Thread(streams::close));
