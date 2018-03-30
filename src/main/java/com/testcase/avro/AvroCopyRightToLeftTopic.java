@@ -1,5 +1,6 @@
 package com.testcase.avro;
 
+import com.testcase.util.KafkaConfig;
 import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -10,7 +11,6 @@ import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
@@ -21,7 +21,7 @@ import java.util.concurrent.ExecutionException;
 public class AvroCopyRightToLeftTopic {
     private final static String RIGHT_TOPIC = "kafka-test-right";
     private final static String LEFT_TOPIC = "kafka-test-left";
-    private final static String KAFKA_SERVER = "localhost:9092";
+    private final static String KAFKA_SERVER = KafkaConfig.BOOTSTRAP_SERVERS;
 
     private KafkaConsumer createRightConsumer() {
         final Properties props = new Properties();

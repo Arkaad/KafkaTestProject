@@ -1,5 +1,6 @@
 package com.testcase.avro;
 
+import com.testcase.util.KafkaConfig;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -17,7 +18,7 @@ import java.util.concurrent.ExecutionException;
  */
 public class ProducerLeftAvro implements AvroProducer {
     private final static String TOPIC = "kafka-test-left";
-    private final static String SERVER = "localhost:9092";
+    private final static String SERVER = KafkaConfig.BOOTSTRAP_SERVERS;
     private KafkaProducer producer = null;
 
     public static KafkaProducer createProducer() {

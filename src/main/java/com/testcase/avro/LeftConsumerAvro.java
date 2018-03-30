@@ -1,5 +1,6 @@
 package com.testcase.avro;
 
+import com.testcase.util.KafkaConfig;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -16,7 +17,7 @@ import java.util.Properties;
  */
 public class LeftConsumerAvro {
     private final static String TOPIC = "kafka-test-left";
-    private final static String SERVER = "localhost:9092";
+    private final static String SERVER = KafkaConfig.BOOTSTRAP_SERVERS;
     private final static long POLL_TIMEOUT = 5 * 1000;  //5 secs
 
     private static KafkaConsumer createConsumer() {

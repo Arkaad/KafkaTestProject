@@ -1,5 +1,6 @@
-package com;
+package com.testcase.unused;
 
+import com.testcase.util.KafkaConfig;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -18,7 +19,7 @@ import java.util.concurrent.ExecutionException;
  * Created by palash on 2/22/2018.
  */
 public class KafkaFileProducer {
-    private static final String SERVER = "localhost:9092";
+    private static final String SERVER = KafkaConfig.BOOTSTRAP_SERVERS;
     private static final String TOPIC = "test";
 
     public static void main(String[] args) {

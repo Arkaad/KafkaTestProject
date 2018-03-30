@@ -14,7 +14,7 @@ import java.util.concurrent.ExecutionException;
  */
 public class ProducerRight implements Producer {
     private final static String TOPIC = "kafka-test-right";
-    private final static String SERVER = "localhost:9092";
+    private final static String SERVER = KafkaConfig.BOOTSTRAP_SERVERS;
     private KafkaProducer producer = null;
 
     public static KafkaProducer createProducer() {

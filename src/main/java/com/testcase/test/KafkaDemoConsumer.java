@@ -1,5 +1,6 @@
 package com.testcase.test;
 
+import com.testcase.util.KafkaConfig;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -16,7 +17,7 @@ import java.util.Properties;
 public class KafkaDemoConsumer {
 //    private final static String TOPIC = "DELTA-c35df20e-7dae-4174-8dc4-a3c81c9018b8";
     private final static String TOPIC = "lng-right-af6f0296-e426-4f4e-9e98-f8bea212b13e";
-    private final static String SERVER = "localhost:9092";
+    private final static String SERVER = KafkaConfig.BOOTSTRAP_SERVERS;
     private final static long POLL_INTERVAL = 5 * 1000;  //5 secs
 
     private static KafkaConsumer createConsumer() {
