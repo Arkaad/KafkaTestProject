@@ -1,14 +1,13 @@
+package com.testcase.unused;
+
+import com.testcase.util.KafkaConfig;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
-import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.KStreamBuilder;
-import org.apache.kafka.streams.kstream.KTable;
-import org.apache.kafka.streams.kstream.ValueJoiner;
 
-import java.util.Arrays;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
@@ -21,7 +20,7 @@ public class KStreamJoin {
 
         Properties streamsConfiguration = new Properties();
 //        streamsConfiguration.put("application.id", "wordcount-lambda-example");
-        streamsConfiguration.put("bootstrap.servers", "localhost:9092");
+        streamsConfiguration.put("bootstrap.servers", KafkaConfig.BOOTSTRAP_SERVERS);
         streamsConfiguration.put(StreamsConfig.ZOOKEEPER_CONNECT_CONFIG, "localhost:2181");
         streamsConfiguration.put(StreamsConfig.KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
         streamsConfiguration.put(StreamsConfig.VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());

@@ -6,7 +6,7 @@ package com.testcase.avro;
 public class StartWorkflowAvro {
     public static void main(String[] args) {
         int interval = 3;
-        long intervalTime = 3 * 60 * 1000L; //30 mins
+        long intervalTime = 1 * 30 * 1000L; //30 mins
         long safeTime = 5 * 60 * 1000L;//5 mins
         int limit = 1000;
         try {

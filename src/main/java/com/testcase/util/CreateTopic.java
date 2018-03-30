@@ -17,7 +17,7 @@ import java.util.concurrent.ExecutionException;
 public class CreateTopic {
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         Properties props = new Properties();
-        props.setProperty(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        props.setProperty(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, KafkaConfig.BOOTSTRAP_SERVERS);
         AdminClient adminClient = AdminClient.create(props);
 
         DescribeTopicsResult describeTopicsResult = adminClient.describeTopics(Arrays.asList("kafka-test-left", "kafka-test-right", "kafka-test-result"));

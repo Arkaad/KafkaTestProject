@@ -1,5 +1,6 @@
 package com.testcase.avro;
 
+import com.testcase.util.KafkaConfig;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.JoinWindows;
@@ -25,7 +26,7 @@ public class JoinStreamAvro {
         config.put(StreamsConfig.APPLICATION_ID_CONFIG,
                 "join-Kafka-Second-Stream");
         config.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG,
-                "localhost:9092");
+                KafkaConfig.BOOTSTRAP_SERVERS);
         config.put(StreamsConfig.STATE_DIR_CONFIG, "D:\\TestProjects\\KafkaTest\\kafka_2.11-0.11.0.2\\streams-pipe");
 
         KStreamBuilder builder = new KStreamBuilder();

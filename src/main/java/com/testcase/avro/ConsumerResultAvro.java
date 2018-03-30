@@ -1,5 +1,6 @@
 package com.testcase.avro;
 
+import com.testcase.util.KafkaConfig;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -18,7 +19,7 @@ public class ConsumerResultAvro {
     private final static String TOPIC = "kafka-test-result";  //Result
     //    private final static String TOPIC = "kafka-test-left";  //Left
 //    private final static String TOPIC = "kafka-test-right";  //Right
-    private final static String SERVER = "localhost:9092";
+    private final static String SERVER = KafkaConfig.BOOTSTRAP_SERVERS;
 
     private static KafkaConsumer createConsumer() {
         final Properties props = new Properties();

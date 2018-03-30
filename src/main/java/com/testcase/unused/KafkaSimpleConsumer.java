@@ -1,11 +1,10 @@
-package com;
+package com.testcase.unused;
 
-import com.testcase.avro.AvroParser;
+import com.testcase.util.KafkaConfig;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.serialization.ByteArrayDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
 import java.io.IOException;
@@ -17,7 +16,7 @@ import java.util.Properties;
  */
 public class KafkaSimpleConsumer {
     private final static String TOPIC = "test";
-    private final static String SERVER = "localhost:9092";
+    private final static String SERVER = KafkaConfig.BOOTSTRAP_SERVERS;
 
     private static KafkaConsumer createConsumer() {
         final Properties props = new Properties();

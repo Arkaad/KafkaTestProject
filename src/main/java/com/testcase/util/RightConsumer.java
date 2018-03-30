@@ -14,7 +14,7 @@ import java.util.Properties;
  */
 public class RightConsumer {
     private final static String TOPIC = "kafka-test-right";
-    private final static String SERVER = "localhost:9092";
+    private final static String SERVER = KafkaConfig.BOOTSTRAP_SERVERS;
 
     private static KafkaConsumer createConsumer() {
         final Properties props = new Properties();
