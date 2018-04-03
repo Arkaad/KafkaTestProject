@@ -1,6 +1,6 @@
 package com.testcase.avro;
 
-import com.testcase.util.KafkaConfig;
+import com.testcase.util.Utility;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -16,8 +16,8 @@ import java.util.Properties;
  * Created by Arka Dutta on 07-Feb-18.
  */
 public class RightConsumerAvro {
-    private final static String TOPIC = "kafka-test-right";
-    private final static String SERVER = KafkaConfig.BOOTSTRAP_SERVERS;
+    private final static String TOPIC = Utility.KAFKA_TOPIC_RIGHT;
+    private final static String SERVER = Utility.BOOTSTRAP_SERVERS;
     private final static long POLL_INTERVAL = 5 * 1000;  //5 secs
 
     private static KafkaConsumer createConsumer() {

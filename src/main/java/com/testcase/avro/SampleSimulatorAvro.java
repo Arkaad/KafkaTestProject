@@ -1,6 +1,5 @@
 package com.testcase.avro;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +20,7 @@ public class SampleSimulatorAvro {
     }
 
     public void startProcess() throws Exception {
-        long safeTime = 20 * 1000; //20 secs
+        long safeTime = 30 * 1000; //20 secs
         long windowTime = (timeInterval * (intervals - 1)) + safeTime;
         System.out.println("windowTime = " + windowTime + " ms.");
 

@@ -13,10 +13,10 @@ import java.util.Properties;
  * Created by Arka Dutta on 07-Feb-18.
  */
 public class ResultConsumer {
-    private final static String TOPIC = "kafka-test-result"; //Result
-    //    private final static String TOPIC = "kafka-test-left"; //Left
-//    private final static String TOPIC = "kafka-test-right"; //Right
-    private final static String SERVER = KafkaConfig.BOOTSTRAP_SERVERS;
+    private final static String TOPIC = Utility.KAFKA_TOPIC_DELTA; //Result
+    //    private final static String TOPIC = Utility.KAFKA_TOPIC_LEFT; //Left
+//    private final static String TOPIC = Utility.KAFKA_TOPIC_RIGHT; //Right
+    private final static String SERVER = Utility.BOOTSTRAP_SERVERS;
 
     private static KafkaConsumer createConsumer() {
         final Properties props = new Properties();

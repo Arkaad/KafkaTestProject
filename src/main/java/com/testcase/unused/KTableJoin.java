@@ -1,6 +1,6 @@
 package com.testcase.unused;
 
-import com.testcase.util.KafkaConfig;
+import com.testcase.util.Utility;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsConfig;
@@ -21,18 +21,18 @@ public class KTableJoin {
         config.put(StreamsConfig.APPLICATION_ID_CONFIG,
                 "table-join-kafka-streams");
         config.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG,
-                KafkaConfig.BOOTSTRAP_SERVERS);
+                Utility.BOOTSTRAP_SERVERS);
         config.put(StreamsConfig.KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
         config.put(StreamsConfig.VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
 //        config.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
 
         KStreamBuilder builder = new KStreamBuilder();
 
-        KTable left = builder.table("kafka-test-left", "Table1");
-        KTable right = builder.table("kafka-test-right", "Table2");
+        KTable left = builder.table(Utility.KAFKA_TOPIC_LEFT, "Table1");
+        KTable right = builder.table(Utility.KAFKA_TOPIC_RIGHT, "Table2");
         KTable joined = left.join(right,
                 (leftValue, rightValue) -> "left=" + leftValue + ", right=" + rightValue);
-        joined.toStream().to("kafka-test-result");
+        joined.toStream().to(Utility.KAFKA_TOPIC_DELTA);
 
         KafkaStreams streams = new KafkaStreams(builder, config);
         streams.start();

@@ -1,6 +1,6 @@
 package com.testcase.avro;
 
-import com.testcase.util.KafkaConfig;
+import com.testcase.util.Utility;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.JoinWindows;
@@ -26,13 +26,13 @@ public class JoinStreamAvro {
         config.put(StreamsConfig.APPLICATION_ID_CONFIG,
                 "join-Kafka-Second-Stream");
         config.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG,
-                KafkaConfig.BOOTSTRAP_SERVERS);
+                Utility.BOOTSTRAP_SERVERS);
         config.put(StreamsConfig.STATE_DIR_CONFIG, "D:\\TestProjects\\KafkaTest\\kafka_2.11-0.11.0.2\\streams-pipe");
 
         KStreamBuilder builder = new KStreamBuilder();
 
-        KStream left = builder.stream("kafka-test-left");
-        KStream right = builder.stream("kafka-test-right");
+        KStream left = builder.stream(Utility.KAFKA_TOPIC_LEFT);
+        KStream right = builder.stream(Utility.KAFKA_TOPIC_RIGHT);
         KStream joined = left.outerJoin(right,
                 new ValueJoiner() {
                     @Override
@@ -45,7 +45,7 @@ public class JoinStreamAvro {
                 }, /* ValueJoiner */
                 JoinWindows.of(windowTime)
         );
-        joined.to("kafka-test-result");
+        joined.to(Utility.KAFKA_TOPIC_DELTA);
         streams = new KafkaStreams(builder, config);
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             System.out.println("Closing Kafka Stream");

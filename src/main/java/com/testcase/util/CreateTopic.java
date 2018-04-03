@@ -17,10 +17,10 @@ import java.util.concurrent.ExecutionException;
 public class CreateTopic {
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         Properties props = new Properties();
-        props.setProperty(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, KafkaConfig.BOOTSTRAP_SERVERS);
+        props.setProperty(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, Utility.BOOTSTRAP_SERVERS);
         AdminClient adminClient = AdminClient.create(props);
 
-        DescribeTopicsResult describeTopicsResult = adminClient.describeTopics(Arrays.asList("kafka-test-left", "kafka-test-right", "kafka-test-result"));
+        DescribeTopicsResult describeTopicsResult = adminClient.describeTopics(Arrays.asList(Utility.KAFKA_TOPIC_LEFT, Utility.KAFKA_TOPIC_RIGHT, Utility.KAFKA_TOPIC_DELTA));
         KafkaFuture<Map<String, TopicDescription>> all = describeTopicsResult.all();
         Map<String, TopicDescription> stringTopicDescriptionMap = all.get();
         for (Map.Entry<String, TopicDescription> descriptionEntry : stringTopicDescriptionMap.entrySet()) {
