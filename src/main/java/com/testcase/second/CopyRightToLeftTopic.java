@@ -1,6 +1,6 @@
 package com.testcase.second;
 
-import com.testcase.util.KafkaConfig;
+import com.testcase.util.Utility;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -19,9 +19,9 @@ import java.util.concurrent.ExecutionException;
  * Created by Arka Dutta on 13-Feb-18.
  */
 public class CopyRightToLeftTopic {
-    private final static String RIGHT_TOPIC = "kafka-test-right";
-    private final static String LEFT_TOPIC = "kafka-test-left";
-    private final static String SERVER = KafkaConfig.BOOTSTRAP_SERVERS;
+    private final static String RIGHT_TOPIC = Utility.KAFKA_TOPIC_RIGHT;
+    private final static String LEFT_TOPIC = Utility.KAFKA_TOPIC_LEFT;
+    private final static String SERVER = Utility.BOOTSTRAP_SERVERS;
 
     private static KafkaConsumer createRightConsumer() {
         final Properties props = new Properties();

@@ -1,6 +1,6 @@
 package com.testcase.first;
 
-import com.testcase.util.KafkaConfig;
+import com.testcase.util.Utility;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
@@ -31,7 +31,7 @@ public class JoinStream {
         config.put(StreamsConfig.APPLICATION_ID_CONFIG,
                 applicationId);
         config.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG,
-                KafkaConfig.BOOTSTRAP_SERVERS);
+                Utility.BOOTSTRAP_SERVERS);
         config.put(StreamsConfig.KEY_SERDE_CLASS_CONFIG,
                 Serdes.String().getClass().getName());
         config.put(StreamsConfig.VALUE_SERDE_CLASS_CONFIG,
@@ -41,8 +41,8 @@ public class JoinStream {
 
         final Serde<String> stringSerde = Serdes.String();
 
-        KStream left = builder.stream(stringSerde, stringSerde, "kafka-test-left");
-        KStream right = builder.stream(stringSerde, stringSerde, "kafka-test-right");
+        KStream left = builder.stream(stringSerde, stringSerde, Utility.KAFKA_TOPIC_LEFT);
+        KStream right = builder.stream(stringSerde, stringSerde, Utility.KAFKA_TOPIC_RIGHT);
         KStream joined;
         if (applicationId.equals("ODD")) {
             joined = right.outerJoin(left,
@@ -74,7 +74,7 @@ public class JoinStream {
             );
         }
 
-        joined.to(stringSerde, stringSerde, "kafka-test-result");
+        joined.to(stringSerde, stringSerde, Utility.KAFKA_TOPIC_DELTA);
         streams = new KafkaStreams(builder, config);
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             System.out.println("Closing Kafka Stream");

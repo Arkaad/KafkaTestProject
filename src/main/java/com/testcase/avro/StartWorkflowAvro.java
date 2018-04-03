@@ -10,6 +10,8 @@ public class StartWorkflowAvro {
         long safeTime = 5 * 60 * 1000L;//5 mins
         int limit = 1000;
         try {
+            CheckOrCreateTopic.checkOrCreateTopic();
+
             new SampleSimulatorAvro(interval, intervalTime, limit).startProcess();
 //            new SampleSimulatorAvroUsingDB(interval, intervalTime, safeTime).startProcess();
         } catch (Exception e) {

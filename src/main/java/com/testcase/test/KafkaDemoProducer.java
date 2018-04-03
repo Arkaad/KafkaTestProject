@@ -1,6 +1,6 @@
 package com.testcase.test;
 
-import com.testcase.util.KafkaConfig;
+import com.testcase.util.Utility;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -14,7 +14,7 @@ import java.util.Properties;
  */
 public class KafkaDemoProducer {
     private final static String TOPIC = "lng-right-af6f0296-e426-4f4e-9e98-f8bea212b13e";
-    private final static String SERVER = KafkaConfig.BOOTSTRAP_SERVERS;
+    private final static String SERVER = Utility.BOOTSTRAP_SERVERS;
 
     public static KafkaProducer createProducer() {
         Properties props = new Properties();

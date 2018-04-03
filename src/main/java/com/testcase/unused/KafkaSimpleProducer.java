@@ -1,6 +1,6 @@
 package com.testcase.unused;
 
-import com.testcase.util.KafkaConfig;
+import com.testcase.util.Utility;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -14,7 +14,7 @@ import java.util.concurrent.ExecutionException;
  * Created by palash on 2/22/2018.
  */
 public class KafkaSimpleProducer {
-    private static final String SERVER = KafkaConfig.BOOTSTRAP_SERVERS;
+    private static final String SERVER = Utility.BOOTSTRAP_SERVERS;
     private static final String TOPIC = "test";
 
     public static void main(String[] args) {

@@ -1,6 +1,6 @@
 package com.testcase.avro;
 
-import com.testcase.util.KafkaConfig;
+import com.testcase.util.Utility;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -16,10 +16,10 @@ import java.util.Properties;
  * Created by Arka Dutta on 14-Feb-18.
  */
 public class ConsumerResultAvro {
-    private final static String TOPIC = "kafka-test-result";  //Result
-    //    private final static String TOPIC = "kafka-test-left";  //Left
-//    private final static String TOPIC = "kafka-test-right";  //Right
-    private final static String SERVER = KafkaConfig.BOOTSTRAP_SERVERS;
+    private final static String TOPIC = Utility.KAFKA_TOPIC_DELTA;  //Result
+    //    private final static String TOPIC = Utility.KAFKA_TOPIC_LEFT;  //Left
+//    private final static String TOPIC = Utility.KAFKA_TOPIC_RIGHT;  //Right
+    private final static String SERVER = Utility.BOOTSTRAP_SERVERS;
 
     private static KafkaConsumer createConsumer() {
         final Properties props = new Properties();
@@ -49,7 +49,7 @@ public class ConsumerResultAvro {
             final ConsumerRecords<String, byte[]> consumerRecords =
                     consumer.poll(200);
             for (ConsumerRecord<String, byte[]> record : consumerRecords) {
-                if (record.serializedValueSize() > -1) {
+                if (record.serializedValueSize() > -1 && !record.key().equals(CheckOrCreateTopic.getKey())) {
                     System.out.print("Consumed Record : Key -> " + record.key() + " Value-> ");
                     AvroParser.deserialize(record.value());
                 }
