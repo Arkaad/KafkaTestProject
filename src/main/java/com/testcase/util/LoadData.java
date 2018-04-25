@@ -10,31 +10,42 @@ import java.util.Vector;
  * Created by Arka Dutta on 16-Feb-18.
  */
 public class LoadData {
-    private static String tableName = "";
-    private static String sql = "";
+    private static String ip = "192.168.33.187";
+    private static String port = "1530";
+    private static String database = "PRODUCT_HUB";
+    private static String username = "PRODUCT_HUB";
+    private static String password = "PRODUCT_HUB";
+    private static String tableName = "LOAD_TEST_187";
+    private static long startLimit = 2000001;
+    private static long endLimit = 4000000;
 
     public static void main(String[] args) {
-        int interval = 3;//3
-        long limit = 1000035; //100035
 
         Connection conn = null;
         PreparedStatement ps = null;
-        Vector<String> dataVector = new Vector<>();
-        tableName = "LINEAGE_TEST_" + interval;
-        sql = "INSERT INTO " + tableName + " VALUES (?)";
+        String sql = "INSERT INTO " + tableName + " VALUES (?)";
         System.out.println("sql = " + sql);
         try {
-            conn = DatabaseConnection.getDBConnection();
+            conn = DatabaseConnection.getDBConnection(ip, port, database, username, password);
             ps = conn.prepareStatement(sql);
             long start = System.currentTimeMillis();
-            for (long i = 1; i <= limit; i++) {
-                dataVector.add(String.valueOf(i));
-                if (dataVector.size() >= 5000) {
-                    executeBatch(dataVector, ps);
+            long total = 0L;
+            long count = 0L;
+            for (long i = startLimit; i <= endLimit; i++) {
+                ps.setLong(1, i);
+                ps.addBatch();
+                count++;
+                if (count >= 5000) {
+                    total += ps.executeBatch().length;
+                    ps.clearBatch();
+                    count = 0;
+                    System.out.println("Total Inserted : " + total);
                 }
             }
-            if (dataVector.size() > 0) {
-                executeBatch(dataVector, ps);
+            if (count != 0) {
+                total += ps.executeBatch().length;
+                ps.clearBatch();
+                System.out.println("Total Inserted : " + total);
             }
             System.out.println("Time taken : " + (System.currentTimeMillis() - start) + " ms.");
         } catch (ClassNotFoundException | SQLException e) {
@@ -55,17 +66,6 @@ public class LoadData {
                 }
             }
         }
-    }
-
-    public static void executeBatch(Vector<String> dataVector, PreparedStatement ps) throws SQLException, ClassNotFoundException {
-        for (String data : dataVector) {
-            ps.setString(1, data);
-            ps.addBatch();
-        }
-        int[] ints = ps.executeBatch();
-        System.out.println(ints.length + " data inserted !!");
-        ps.clearBatch();
-        dataVector.clear();
     }
 
     public static void readData() throws SQLException {

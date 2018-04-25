@@ -28,7 +28,7 @@ public class SampleSimulatorAvroUsingDB {
         this.safeTime = safeTime;
     }
 
-    public void startProcess() throws Exception {
+    public void startProcess(String projectId) throws Exception {
         long windowTime = (timeInterval * (intervals - 1)) + safeTime;
         System.out.println("windowTime = " + windowTime + " ms. " + (windowTime / 60000) + " mins");
         String sql;
@@ -36,8 +36,8 @@ public class SampleSimulatorAvroUsingDB {
         Connection conn = null;
         ResultSet rs = null;
         AvroProducer producer;
-        JoinStreamAvro stream = new JoinStreamAvro(windowTime);
-        stream.init();
+        JoinStreamAvro stream = new JoinStreamAvro(windowTime, projectId);
+        stream.initKStream();
         for (int i = 0; i < intervals; i++) {
             System.out.println("Sampling Data for : " + i + " interval");
             producer = i > 0 ? new ProducerRightAvro() : new ProducerLeftAvro();
