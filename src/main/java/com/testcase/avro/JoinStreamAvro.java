@@ -33,10 +33,8 @@ public class JoinStreamAvro {
                 Utility.BOOTSTRAP_SERVERS);
         config.put(StreamsConfig.STATE_DIR_CONFIG, ".\\logs\\streams-pipe");
 
-//        KStreamBuilder builder = new KStreamBuilder();
         StreamsBuilder builder = new StreamsBuilder();
 
-//        KStream left = builder.stream(TopologyBuilder.AutoOffsetReset.LATEST, Utility.KAFKA_TOPIC_LEFT);
         KStream left = builder.stream(Utility.KAFKA_TOPIC_LEFT);
         KStream right = builder.stream(Utility.KAFKA_TOPIC_RIGHT);
         KStream joined = left.outerJoin(right,
@@ -49,7 +47,7 @@ public class JoinStreamAvro {
                             return null;
                     }
                 }, /* ValueJoiner */
-                JoinWindows.of(windowTime).after(0)
+                JoinWindows.of(windowTime).before(0)
         );
         joined.to(Utility.KAFKA_TOPIC_DELTA);
         streams = new KafkaStreams(builder.build(), config);
@@ -59,13 +57,7 @@ public class JoinStreamAvro {
                 close();
             }
         }));
-        try {
-            streams.cleanUp();
-            streams.start();
-            System.out.println("Kafka Streams started ....");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        run();
     }
 
     public void initKTable() {
@@ -97,12 +89,7 @@ public class JoinStreamAvro {
                 close();
             }
         }));
-        try {
-            streams.cleanUp();
-            streams.start();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        run();
     }
 
     public void initKStream_V2() {
@@ -135,6 +122,10 @@ public class JoinStreamAvro {
                 close();
             }
         }));
+        run();
+    }
+
+    private void run() {
         try {
             streams.cleanUp();
             streams.start();
