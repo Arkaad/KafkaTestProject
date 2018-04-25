@@ -1,7 +1,5 @@
 package com.testcase.avro;
 
-import org.apache.kafka.streams.kstream.JoinWindows;
-
 import java.util.UUID;
 
 /**
@@ -13,7 +11,7 @@ public class StartWorkflowAvro {
         long intervalTime = 1 * 30 * 1000L; //30 sec
         int limit = 10;
         int diffPerInterval = 5;
-        long safeTime = 30 * 60 * 1000L;//30 mins
+        long safeTime = 5 * 60 * 1000L;//5 mins
         try {
             String projectId = UUID.randomUUID().toString();
             CheckOrCreateTopic.checkOrCreateTopic();
