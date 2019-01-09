@@ -1,15 +1,15 @@
 package com.testcase.first;
 
 import com.testcase.util.Utility;
-import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
+import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.JoinWindows;
 import org.apache.kafka.streams.kstream.KStream;
-import org.apache.kafka.streams.kstream.KStreamBuilder;
 import org.apache.kafka.streams.kstream.ValueJoiner;
 
+import java.time.Duration;
 import java.util.Properties;
 
 /**
@@ -32,17 +32,16 @@ public class JoinStream {
                 applicationId);
         config.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG,
                 Utility.BOOTSTRAP_SERVERS);
-        config.put(StreamsConfig.KEY_SERDE_CLASS_CONFIG,
+        config.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG,
                 Serdes.String().getClass().getName());
-        config.put(StreamsConfig.VALUE_SERDE_CLASS_CONFIG,
+        config.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG,
                 Serdes.String().getClass().getName());
 
-        KStreamBuilder builder = new KStreamBuilder();
 
-        final Serde<String> stringSerde = Serdes.String();
+        StreamsBuilder builder = new StreamsBuilder();
 
-        KStream left = builder.stream(stringSerde, stringSerde, Utility.KAFKA_TOPIC_LEFT);
-        KStream right = builder.stream(stringSerde, stringSerde, Utility.KAFKA_TOPIC_RIGHT);
+        KStream<String, String> left = builder.stream(Utility.KAFKA_TOPIC_LEFT);
+        KStream<String, String> right = builder.stream(Utility.KAFKA_TOPIC_RIGHT);
         KStream joined;
         if (applicationId.equals("ODD")) {
             joined = right.outerJoin(left,
@@ -56,7 +55,7 @@ public class JoinStream {
                                 return null;
                         }
                     }, /* ValueJoiner */
-                    JoinWindows.of(windowTime)
+                    JoinWindows.of(Duration.ofMillis(windowTime))
             );
         } else {
             joined = left.outerJoin(right,
@@ -70,12 +69,12 @@ public class JoinStream {
                                 return null;
                         }
                     }, /* ValueJoiner */
-                    JoinWindows.of(windowTime)
+                    JoinWindows.of(Duration.ofMillis(windowTime))
             );
         }
 
-        joined.to(stringSerde, stringSerde, Utility.KAFKA_TOPIC_DELTA);
-        streams = new KafkaStreams(builder, config);
+        joined.to(Utility.KAFKA_TOPIC_DELTA);
+        streams = new KafkaStreams(builder.build(), config);
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             System.out.println("Closing Kafka Stream");
             if (streams != null) {
