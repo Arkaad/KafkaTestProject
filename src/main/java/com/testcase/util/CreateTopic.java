@@ -2,12 +2,11 @@ package com.testcase.util;
 
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
-import org.apache.kafka.clients.admin.DescribeTopicsResult;
-import org.apache.kafka.clients.admin.TopicDescription;
-import org.apache.kafka.common.KafkaFuture;
+import org.apache.kafka.clients.admin.CreateTopicsResult;
+import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.common.errors.TopicExistsException;
 
-import java.util.Arrays;
-import java.util.Map;
+import java.util.Collections;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
@@ -16,15 +15,24 @@ import java.util.concurrent.ExecutionException;
  */
 public class CreateTopic {
     public static void main(String[] args) throws ExecutionException, InterruptedException {
-        Properties props = new Properties();
-        props.setProperty(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, Utility.BOOTSTRAP_SERVERS);
-        AdminClient adminClient = AdminClient.create(props);
+        AdminClient adminClient = null;
+        try {
+            Properties props = new Properties();
+            props.setProperty(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, Utility.BOOTSTRAP_SERVERS);
+            adminClient = AdminClient.create(props);
 
-        DescribeTopicsResult describeTopicsResult = adminClient.describeTopics(Arrays.asList(Utility.KAFKA_TOPIC_LEFT, Utility.KAFKA_TOPIC_RIGHT, Utility.KAFKA_TOPIC_DELTA));
-        KafkaFuture<Map<String, TopicDescription>> all = describeTopicsResult.all();
-        Map<String, TopicDescription> stringTopicDescriptionMap = all.get();
-        for (Map.Entry<String, TopicDescription> descriptionEntry : stringTopicDescriptionMap.entrySet()) {
-            System.out.println("Key - >" + descriptionEntry.getKey() + " Value ->" + descriptionEntry.getValue().name());
+            String topicName = "Words-Counts-Topic";
+            NewTopic newTopic = new NewTopic(topicName, 3, (short)1);
+            CreateTopicsResult topics = adminClient.createTopics(Collections.singleton(newTopic));
+            topics.values().get(topicName).get();
+            System.out.println(topics.toString() + " created successfully.");
+        } catch (TopicExistsException ex) {
+            ex.printStackTrace();
+        } finally {
+            if (adminClient != null) {
+                adminClient.close();
+            }
         }
+
     }
 }
